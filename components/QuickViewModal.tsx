@@ -6,7 +6,7 @@ interface QuickViewModalProps {
   product: Product | null;
   isOpen: boolean;
   onClose: () => void;
-  onAddToCart: (product: Product) => void;
+  onAddToCart: (product: Product, quantity: number) => void;
 }
 
 const PACK_OPTIONS = [1, 2, 3, 5, 10];
@@ -19,8 +19,7 @@ const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen, onClos
 
   const handleAddToCart = () => {
     setIsAdding(true);
-    // In a real app, you would pass the selectedPack quantity here
-    onAddToCart(product);
+    onAddToCart(product, selectedPack);
     setTimeout(() => {
       setIsAdding(false);
       onClose();

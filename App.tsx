@@ -4,25 +4,53 @@ import CategoryNav from './components/CategoryNav';
 import ProductCard from './components/ProductCard';
 import FilterBar from './components/FilterBar';
 import QuickViewModal from './components/QuickViewModal';
+import CartPage from './components/CartPage';
 import { PRODUCTS } from './constants';
-import { Product } from './types';
+import { Product, CartItem } from './types';
 import { Zap, AlertCircle } from 'lucide-react';
 
 const App: React.FC = () => {
-  const [cartCount, setCartCount] = useState(0);
-  
-  // Quick View State
+  // --- State ---
+  const [currentView, setCurrentView] = useState<'home' | 'checkout'>('home');
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
 
-  // Filtering State
+  // Filter State
   const maxGlobalPrice = useMemo(() => Math.ceil(Math.max(...PRODUCTS.map(p => p.price))), []);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [priceLimit, setPriceLimit] = useState<number>(maxGlobalPrice);
   const [minRating, setMinRating] = useState<number | null>(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  const handleAddToCart = (product: Product) => {
-    setCartCount(prev => prev + 1);
+  // --- Cart Logic ---
+  const cartCount = useMemo(() => cartItems.reduce((acc, item) => acc + item.quantity, 0), [cartItems]);
+
+  const handleAddToCart = (product: Product, quantity: number = 1) => {
+    setCartItems(prev => {
+      const existingItem = prev.find(item => item.id === product.id);
+      if (existingItem) {
+        return prev.map(item => 
+          item.id === product.id 
+            ? { ...item, quantity: item.quantity + quantity } 
+            : item
+        );
+      }
+      return [...prev, { ...product, quantity }];
+    });
+  };
+
+  const handleUpdateCartQuantity = (id: number, delta: number) => {
+    setCartItems(prev => prev.map(item => {
+      if (item.id === id) {
+        const newQty = Math.max(1, item.quantity + delta);
+        return { ...item, quantity: newQty };
+      }
+      return item;
+    }));
+  };
+
+  const handleRemoveFromCart = (id: number) => {
+    setCartItems(prev => prev.filter(item => item.id !== id));
   };
 
   const handleClearFilters = () => {
@@ -32,9 +60,9 @@ const App: React.FC = () => {
     setIsFilterOpen(false);
   };
 
+  // --- Render Logic ---
   const filteredProducts = useMemo(() => {
     return PRODUCTS.filter(product => {
-      // Category Filter
       if (selectedCategory) {
         if (selectedCategory === 'new') {
           if (!product.isNew) return false;
@@ -42,26 +70,49 @@ const App: React.FC = () => {
           return false;
         }
       }
-
-      // Price Filter
       if (product.price > priceLimit) return false;
-
-      // Rating Filter
       if (minRating !== null && product.rating < minRating) return false;
-
       return true;
     });
   }, [selectedCategory, priceLimit, minRating]);
 
+  // If in Checkout View
+  if (currentView === 'checkout') {
+    return (
+      <div className="min-h-screen bg-white font-sans">
+        <Header 
+          cartCount={cartCount} 
+          onCartClick={() => setCurrentView('checkout')}
+          onLogoClick={() => setCurrentView('home')}
+        />
+        <CartPage 
+          cartItems={cartItems}
+          onUpdateQuantity={handleUpdateCartQuantity}
+          onRemoveItem={handleRemoveFromCart}
+          onBack={() => setCurrentView('home')}
+        />
+        {/* Mobile Bottom Nav for Checkout */}
+        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200 py-2 px-6 flex justify-center z-40 safe-area-pb">
+             <button onClick={() => setCurrentView('home')} className="text-xs font-medium text-black">חזרה לחנות</button>
+        </div>
+      </div>
+    );
+  }
+
+  // Home View
   return (
     <div className="min-h-screen pb-20 bg-white font-sans">
-      <Header cartCount={cartCount} />
+      <Header 
+        cartCount={cartCount} 
+        onCartClick={() => setCurrentView('checkout')}
+        onLogoClick={() => setCurrentView('home')}
+      />
       <CategoryNav 
         selectedCategory={selectedCategory}
         onSelectCategory={setSelectedCategory}
       />
 
-      {/* Hero Section - Only show if no heavy filtering to keep focus on products when searching */}
+      {/* Hero Section */}
       {!selectedCategory && !minRating && priceLimit === maxGlobalPrice && (
         <section className="relative w-full h-[200px] md:h-[400px] bg-gray-900 overflow-hidden group">
             <div className="absolute inset-0 opacity-80 transition-opacity group-hover:opacity-70">
@@ -113,7 +164,7 @@ const App: React.FC = () => {
                 <ProductCard 
                   key={product.id} 
                   product={product}
-                  onAddToCart={handleAddToCart}
+                  onAddToCart={(p) => handleAddToCart(p, 1)}
                   onQuickView={setQuickViewProduct}
                 />
             ))}
@@ -150,7 +201,10 @@ const App: React.FC = () => {
 
       {/* Mobile Bottom Nav (Sticky) */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200 py-2 px-6 flex justify-between items-center z-40 text-[10px] font-medium text-gray-500 safe-area-pb">
-        <div className="flex flex-col items-center gap-1 text-black">
+        <div className="flex flex-col items-center gap-1 text-black" onClick={() => {
+           window.scrollTo({ top: 0, behavior: 'smooth' });
+           setCurrentView('home');
+        }}>
            <Zap className="w-5 h-5" />
            <span>בית</span>
         </div>

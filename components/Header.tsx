@@ -3,9 +3,11 @@ import { Search, ShoppingBag, User, Heart, Menu } from 'lucide-react';
 
 interface HeaderProps {
   cartCount: number;
+  onCartClick?: () => void;
+  onLogoClick?: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ cartCount }) => {
+const Header: React.FC<HeaderProps> = ({ cartCount, onCartClick, onLogoClick }) => {
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-100">
       {/* Top Banner */}
@@ -21,7 +23,12 @@ const Header: React.FC<HeaderProps> = ({ cartCount }) => {
             <button className="md:hidden p-1">
               <Menu className="w-6 h-6 text-gray-700" />
             </button>
-            <h1 className="text-2xl font-extrabold tracking-tighter italic font-serif">החנות של מיצ׳י</h1>
+            <h1 
+              onClick={onLogoClick}
+              className="text-2xl font-extrabold tracking-tighter italic font-serif cursor-pointer hover:opacity-80 transition-opacity"
+            >
+              החנות של מיצ׳י
+            </h1>
           </div>
 
           {/* Center: Search (Hidden on super small screens, visible on mobile via expansion in real app) */}
@@ -49,10 +56,13 @@ const Header: React.FC<HeaderProps> = ({ cartCount }) => {
              <button className="text-gray-700 hover:text-black relative">
               <User className="w-6 h-6" />
             </button>
-            <button className="text-gray-700 hover:text-black relative">
+            <button 
+              className="text-gray-700 hover:text-black relative"
+              onClick={onCartClick}
+            >
               <ShoppingBag className="w-6 h-6" />
               {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-black text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 bg-black text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center animate-in zoom-in">
                   {cartCount}
                 </span>
               )}
