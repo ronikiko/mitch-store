@@ -10,18 +10,17 @@ export const CATEGORIES: Category[] = [
   { id: 'sport', name: 'ספורט', image: 'https://picsum.photos/100/100?random=107' },
 ];
 
-export const PRODUCTS: Product[] = [
+export const PRODUCTS_LIST: Product[] = [
   {
     id: 1,
-    title: "שמלת ערב שחורה קלאסית",
+    title: "שישית מים מינרלים נביעות",
     price: 89.90,
     originalPrice: 129.90,
-    discount: 30,
-    imageUrl: "https://picsum.photos/400/600?random=1",
+    imageUrl: "https://www.ewines.co.il/cdn/shop/files/D7_A9_D7_99_D7_A9_D7_99_D7_99_D7_AA-_D7_9E_D7_99_D7_9D.jpg?v=1738670390&width=600",
     rating: 4.8,
     reviews: 120,
     isNew: true,
-    category: "dresses"
+    category: 'dresses'
   },
   {
     id: 2,
@@ -37,7 +36,6 @@ export const PRODUCTS: Product[] = [
     title: "ג'ינס סקיני בהיר",
     price: 110.00,
     originalPrice: 150.00,
-    discount: 26,
     imageUrl: "https://picsum.photos/400/600?random=3",
     rating: 4.2,
     reviews: 200,
@@ -58,7 +56,6 @@ export const PRODUCTS: Product[] = [
     title: "סט טופ ומכנסיים קז'ואל",
     price: 99.90,
     originalPrice: 149.90,
-    discount: 33,
     imageUrl: "https://picsum.photos/400/600?random=5",
     rating: 4.7,
     reviews: 310,
@@ -78,7 +75,6 @@ export const PRODUCTS: Product[] = [
     title: "שרשרת זהב עדינה",
     price: 29.90,
     originalPrice: 49.90,
-    discount: 40,
     imageUrl: "https://picsum.photos/400/600?random=7",
     rating: 4.3,
     reviews: 15,
@@ -98,7 +94,6 @@ export const PRODUCTS: Product[] = [
     title: "שמלת מקסי לחוף",
     price: 79.90,
     originalPrice: 99.90,
-    discount: 20,
     imageUrl: "https://picsum.photos/400/600?random=9",
     rating: 4.8,
     reviews: 67,
@@ -128,7 +123,6 @@ export const PRODUCTS: Product[] = [
     title: "מעיל טרנץ' דק",
     price: 189.90,
     originalPrice: 250.00,
-    discount: 24,
     imageUrl: "https://picsum.photos/400/600?random=12",
     rating: 4.9,
     reviews: 21,
@@ -136,3 +130,13 @@ export const PRODUCTS: Product[] = [
     category: "tops"
   }
 ];
+
+export const PRODUCTS = PRODUCTS_LIST.map(product => {
+  if (product.originalPrice) {
+    return {
+      ...product,
+      discount: Math.round((product.originalPrice - product.price) / product.originalPrice * 100)
+    }
+  }
+  return product;
+});

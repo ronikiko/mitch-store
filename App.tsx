@@ -113,7 +113,7 @@ const App: React.FC = () => {
       />
 
       {/* Hero Section */}
-      {!selectedCategory && !minRating && priceLimit === maxGlobalPrice && (
+      {/* {!selectedCategory && !minRating && priceLimit === maxGlobalPrice && (
         <section className="relative w-full h-[200px] md:h-[400px] bg-gray-900 overflow-hidden group">
             <div className="absolute inset-0 opacity-80 transition-opacity group-hover:opacity-70">
                 <img src="https://picsum.photos/1600/900?grayscale" alt="Hero" className="w-full h-full object-cover" />
@@ -126,12 +126,12 @@ const App: React.FC = () => {
             </button>
             </div>
         </section>
-      )}
+      )} */}
 
       {/* Flash Sale Banner */}
       {!selectedCategory && (
         <section className="container mx-auto px-4 mt-6 mb-2">
-            <div className="flex items-center justify-between mb-4 bg-yellow-50 p-3 rounded-lg border border-yellow-100">
+            {/* <div className="flex items-center justify-between mb-4 bg-yellow-50 p-3 rounded-lg border border-yellow-100">
             <div className="flex items-center gap-2">
                 <Zap className="w-5 h-5 text-yellow-600 fill-yellow-500 animate-pulse" />
                 <h2 className="text-lg font-bold text-gray-800">מבצע בזק מסתיים בעוד:</h2>
@@ -139,7 +139,7 @@ const App: React.FC = () => {
             <div className="flex gap-1 text-sm font-mono font-bold bg-black text-white px-3 py-1 rounded shadow-sm">
                 <span>02</span>:<span>45</span>:<span>12</span>
             </div>
-            </div>
+            </div> */}
         </section>
       )}
 
@@ -159,7 +159,7 @@ const App: React.FC = () => {
       {/* Product Grid */}
       <main className="container mx-auto px-2 md:px-4 min-h-[400px]">
         {filteredProducts.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-x-3 gap-y-8 md:gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-x-3 gap-y-8 md:gap-6">
             {filteredProducts.map((product) => (
                 <ProductCard 
                   key={product.id} 
