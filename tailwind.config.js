@@ -6,6 +6,7 @@ export default {
     './components/**/*.{js,ts,jsx,tsx}',
     './constants.ts',
     './types.ts',
+    './index.tsx',
   ],
   theme: {
     extend: {},
